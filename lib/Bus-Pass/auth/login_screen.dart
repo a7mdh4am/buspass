@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:buss_pass/Bus-Pass/auth/sign_up_screen.dart';
 import 'package:buss_pass/Bus-Pass/navigationbar.dart';
 import 'package:buss_pass/Bus-Pass/services/NavigationBarDriver.dart';
@@ -159,6 +161,24 @@ class _LoginScreenState extends State<LoginScreen> {
                             _isLoading = true;
                           });
 
+                          FutureOr<Null> handleError(dynamic error) async {
+                            setState(() {
+                              _isLoading = false;
+                            });
+
+                            if (error.toString().contains('401')) {
+                              _showErrorDialog('Wrong username or password!');
+                            } else if (error.toString().contains('404')) {
+                              _showErrorDialog(
+                                  'There is no user with this data!');
+                            } else if (error.toString().contains('500')) {
+                              _showErrorDialog(
+                                  'The username or password is Incorrect!');
+                            } else {
+                              _showErrorDialog('An error occurred: $error');
+                            }
+                          }
+
                           if (dropdownValue == 'Continue as Driver') {
                             final driverProvider = Provider.of<DriverProvider>(
                                 context,
@@ -183,12 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 _showErrorDialog(
                                     'Invalid access token or authentication failed.');
                               }
-                            }).catchError((error) {
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              _showErrorDialog('$error');
-                            });
+                            }).catchError(handleError);
                           } else {
                             final userProvider = Provider.of<UserProvider>(
                                 context,
@@ -213,12 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 _showErrorDialog(
                                     'Invalid access token or authentication failed.');
                               }
-                            }).catchError((error) {
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              _showErrorDialog('$error');
-                            });
+                            }).catchError(handleError);
                           }
                         },
                   child: _isLoading
