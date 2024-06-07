@@ -53,4 +53,16 @@ class DriverProvider extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('user_role');
   }
+
+  void updateDriverInformation({
+    required String fullName,
+    required String email,
+    required String phoneNumber,
+  }) {
+    driver = driver.copyWith(
+      fullName: fullName,
+      email: email,
+      phoneNumber: phoneNumber,
+    );
+  }
 }

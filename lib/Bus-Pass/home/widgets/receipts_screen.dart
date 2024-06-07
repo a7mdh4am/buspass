@@ -6,7 +6,7 @@ import 'package:buss_pass/Bus-Pass/home/widgets/ReceiptScreen.dart';
 import 'package:buss_pass/Bus-Pass/profile/widgets/dateForrmat.dart';
 import 'package:flutter/material.dart';
 
-class ReceiptsScreen extends StatelessWidget {
+class ReceiptsScreen extends StatefulWidget {
   final int passengerId;
 
   const ReceiptsScreen({
@@ -15,9 +15,16 @@ class ReceiptsScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _ReceiptsScreenState createState() => _ReceiptsScreenState();
+}
+
+class _ReceiptsScreenState extends State<ReceiptsScreen> {
+  String _message = '';
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: ReceiptService.getReceiptsByPassengerId(passengerId),
+      future: ReceiptService.getReceiptsByPassengerId(widget.passengerId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
@@ -39,7 +46,7 @@ class ReceiptsScreen extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
-          final List<Map<String, dynamic>> tickets = snapshot.data!;
+          final List<Map<String, dynamic>> tickets = snapshot.data ?? [];
           return Scaffold(
             appBar: AppBar(
               title: const Text(
@@ -58,13 +65,16 @@ class ReceiptsScreen extends StatelessWidget {
                 final ticket = tickets[index];
                 return _buildTicketReceipt(
                   context: context,
-                  passengerName: ticket['passengerName'],
-                  fromStation: ticket['fromStation'],
-                  toStation: ticket['toStationStation'],
-                  amountPaid: ticket['amountPaid'].toString(),
-                  bookingDate: ticket['bookingDate'],
-                  ticketId: ticket['id'].toString(),
-                  tripId: ticket['tripId'],
+                  passengerName: ticket['passengerName'] ?? 'Unknown',
+                  driverName: ticket['driverName'] ?? 'Unknown',
+                  driverPhone: ticket['driverNumber'] ?? 'Unknown',
+                  fromStation: ticket['fromStation'] ?? 'Unknown',
+                  toStation: ticket['toStation'] ?? 'Unknown',
+                  amountPaid: ticket['amountPaid']?.toString() ?? '0',
+                  bookingDate: ticket['bookingDate'] ?? '',
+                  tripTime: ticket['tripTime'] ?? '',
+                  ticketId: ticket['id']?.toString() ?? '0',
+                  tripId: ticket['tripId'] ?? 0,
                 );
               },
             ),
@@ -76,6 +86,23 @@ class ReceiptsScreen extends StatelessWidget {
     );
   }
 
+  Future<void> cancelTrip(int bookingId) async {
+    final response = await http.delete(
+      Uri.parse(
+          'http://busspass.somee.com/api/Booking/CancelBooking/$bookingId'),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _message = 'Booking canceled successfully';
+      });
+    } else {
+      setState(() {
+        _message = 'Failed to cancel booking: ${response.reasonPhrase}';
+      });
+    }
+  }
+
   Widget _buildTicketReceipt({
     required BuildContext context,
     required String passengerName,
@@ -85,7 +112,14 @@ class ReceiptsScreen extends StatelessWidget {
     required String bookingDate,
     required String ticketId,
     required int tripId,
+    required tripTime,
+    required driverName,
+    required driverPhone,
   }) {
+    DateTime TripDateTime = DateTime.parse(tripTime);
+    DateTime now = DateTime.now();
+    bool canCancel = now.isBefore(TripDateTime.add(Duration(hours: 12)));
+
     return Container(
       color: Color.fromRGBO(241, 241, 241, 1),
       child: Padding(
@@ -95,55 +129,99 @@ class ReceiptsScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 0),
             _buildTicketInfo(passengerName, fromStation, toStation, amountPaid,
-                bookingDate, ticketId),
+                bookingDate, ticketId, tripTime),
             const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(8.0),
-                fixedSize: const Size(110, 20),
-                textStyle: const TextStyle(
-                  fontSize: 15,
-                ),
-                backgroundColor: Color.fromRGBO(39, 66, 129, 1),
-                foregroundColor: Colors.white,
-                elevation: 10,
-                alignment: Alignment.center,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-              onPressed: () async {
-                final qrCodeResponse = await http.post(
-                  Uri.parse(
-                      'http://busspass.somee.com/api/Attendance/generate-qrcodeBase64'),
-                  headers: {'Content-Type': 'application/json'},
-                  body: jsonEncode({
-                    'passengerId': passengerId,
-                    'tripId': tripId,
-                  }),
-                );
-
-                if (qrCodeResponse.statusCode == 200) {
-                  String base64Image = qrCodeResponse.body.split(',')[1];
-                  Uint8List qrCodeBytes = base64.decode(base64Image);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Receiptscreen(
-                        price: amountPaid,
-                        startingStop: fromStation,
-                        endingStop: toStation,
-                        driverName: 'driverName',
-                        ticketId: ticketId,
-                        bookingTime: Date().formatDate(bookingDate),
-                        qrCodeImage: Image.memory(qrCodeBytes),
-                        tripId: tripId,
-                      ),
+            Row(
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(8.0),
+                    fixedSize: const Size(110, 20),
+                    textStyle: const TextStyle(fontSize: 15),
+                    backgroundColor: Color.fromRGBO(39, 66, 129, 1),
+                    foregroundColor: Colors.white,
+                    elevation: 10,
+                    alignment: Alignment.center,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                  );
-                }
-              },
-              child: const Text("View Details"),
+                  ),
+                  onPressed: () async {
+                    final qrCodeResponse = await http.post(
+                      Uri.parse(
+                          'http://busspass.somee.com/api/Attendance/generate-qrcodeBase64'),
+                      headers: {'Content-Type': 'application/json'},
+                      body: jsonEncode({
+                        'passengerId': widget.passengerId,
+                        'tripId': tripId,
+                      }),
+                    );
+
+                    if (qrCodeResponse.statusCode == 200) {
+                      String base64Image = qrCodeResponse.body.split(',')[1];
+                      Uint8List qrCodeBytes = base64.decode(base64Image);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Receiptscreen(
+                            price: amountPaid,
+                            startingStop: fromStation,
+                            endingStop: toStation,
+                            driverName: driverName,
+                            ticketId: ticketId,
+                            bookingTime: Date().formatDate(bookingDate),
+                            tripDate: Date().formatDate(tripTime),
+                            qrCodeImage: Image.memory(qrCodeBytes),
+                            tripId: tripId,
+                            driverPhone: driverPhone,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text("View Details"),
+                ),
+                SizedBox(width: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(8.0),
+                    fixedSize: const Size(110, 20),
+                    textStyle: const TextStyle(fontSize: 15),
+                    backgroundColor: Color.fromRGBO(39, 66, 129, 1),
+                    foregroundColor: Colors.white,
+                    elevation: 10,
+                    alignment: Alignment.center,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  onPressed: canCancel
+                      ? () async {
+                          await cancelTrip(int.parse(ticketId));
+                          // Show a dialog or snackbar with the message
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                backgroundColor: Colors.white,
+                                title: Text('Cancel Trip'),
+                                content: Text(_message),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      : null, // Disable button if canCancel is false
+                  child: const Text("Cancel Trip"),
+                ),
+              ],
             ),
           ],
         ),
@@ -158,6 +236,7 @@ class ReceiptsScreen extends StatelessWidget {
     String amountPaid,
     String bookingDate,
     String ticketId,
+    tripTime,
   ) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -174,6 +253,7 @@ class ReceiptsScreen extends StatelessWidget {
           _buildInfoRow("To Station", toStation),
           _buildInfoRow("Amount Paid", "$amountPaid£E"),
           _buildInfoRow("Booking Date", Date().formatDate(bookingDate)),
+          _buildInfoRow("Trip Date", Date().formatDate(tripTime)),
           _buildInfoRow("Ticket ID", ticketId),
         ],
       ),

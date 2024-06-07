@@ -4,8 +4,7 @@ class Driver {
   String fullName;
   String email;
   String phoneNumber;
-  double passengerLat;
-  double passengerLong;
+
   String? authToken; // Make authToken nullable
 
   Driver({
@@ -14,8 +13,6 @@ class Driver {
     required this.fullName,
     required this.email,
     required this.phoneNumber,
-    required this.passengerLat,
-    required this.passengerLong,
     this.authToken, // Optional parameter for authToken
   });
 
@@ -30,8 +27,6 @@ class Driver {
       fullName: json['fullName'] ?? '',
       email: json['email'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
-      passengerLat: json['passengerLat']?.toDoubleOrNull() ?? 0.0,
-      passengerLong: json['passengerLong']?.toDoubleOrNull() ?? 0.0,
       authToken: json['authToken'], // Parse authToken from JSON
     );
   }
@@ -43,8 +38,6 @@ class Driver {
       fullName: '',
       email: '',
       phoneNumber: '',
-      passengerLat: 0.0,
-      passengerLong: 0.0,
       authToken: null, // Set authToken to null for empty User
     );
   }
@@ -56,9 +49,25 @@ class Driver {
       'fullName': fullName,
       'email': email,
       'phoneNumber': phoneNumber,
-      'passengerLat': passengerLat,
-      'passengerLong': passengerLong,
       'authToken': authToken, // Include authToken in JSON
     };
+  }
+
+  Driver copyWith({
+    int? id,
+    String? username,
+    String? fullName,
+    String? email,
+    String? phoneNumber,
+    String? authToken,
+  }) {
+    return Driver(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      fullName: fullName ?? this.fullName,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      authToken: authToken ?? this.authToken,
+    );
   }
 }

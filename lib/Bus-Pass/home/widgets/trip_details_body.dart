@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 class TripDetailsBody extends StatelessWidget {
   final String? driverName;
+  final String? driverPhone;
   final String? date;
   final int? price;
   final int? toStationId;
@@ -25,12 +26,14 @@ class TripDetailsBody extends StatelessWidget {
     required this.seats,
     this.toStationName,
     this.fromStationName,
+    this.driverPhone,
   });
 
   factory TripDetailsBody.fromJson(Map<String, dynamic> json) {
     return TripDetailsBody(
       key: UniqueKey(),
       driverName: json['driverName'] as String?,
+      driverPhone: json['driverPhone'] as String ?? '',
       date: json['departureTime'] as String?,
       toStationName: json['toStationName'] as String?,
       fromStationName: json['fromStationName'] as String?,

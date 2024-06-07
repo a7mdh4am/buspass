@@ -28,9 +28,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Map<String, dynamic> profileData = {
       'fullName': fullNameController.text,
       'email': emailController.text,
-      'phone': phoneController.text,
+      'phoneNumber': phoneController.text,
       'username': usernameController.text,
-      'password': passwordController.text,
+      'passwordHash': passwordController.text,
     };
 
     try {
@@ -43,7 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (response.statusCode == 204) {
         Navigator.pop(context);
       } else {
-        print('Failed to update profile: ${response.body}');
+        print('Failed to update profile: ${response.statusCode}');
       }
     } catch (error) {
       print('Error updating profile: $error');

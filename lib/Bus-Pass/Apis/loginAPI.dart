@@ -131,13 +131,9 @@ class LoginApi {
       id: userId,
       username: responseData['user_name'] ?? '', // Access data from parsed JSON
       authToken: authToken,
-      fullName: responseData['user_name'] ?? '',
+      fullName: responseData['fullname'] ?? '',
       email: responseData['email'] ?? '',
       phoneNumber: responseData['phoneNumber'] ?? '',
-      passengerLat:
-          (responseData['passengerLat'] ?? 0).toDouble(), // Cast to double
-      passengerLong:
-          (responseData['passengerLong'] ?? 0).toDouble(), // Cast to double
     );
   }
 }
