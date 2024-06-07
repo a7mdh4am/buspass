@@ -87,8 +87,10 @@ class _BookNowButtonState extends State<BookNowButton> {
             MaterialPageRoute(
               builder: (context) => Receiptscreen(
                 driverName: widget.tripDetailsBodies.driverName!,
+                driverPhone: widget.tripDetailsBodies.driverPhone!,
                 price: widget.tripDetailsBodies.price.toString(),
-                bookingTime: Date().formatDate(widget.tripDetailsBodies.date!),
+                bookingTime: Date().formatDate(DateTime.now().toString()),
+                tripDate: Date().formatDate(widget.tripDetailsBodies.date!),
                 startingStop: widget.tripDetailsBodies.fromStationName!,
                 endingStop: widget.tripDetailsBodies.toStationName!,
                 ticketId: bookingId,
@@ -124,7 +126,7 @@ class _BookNowButtonState extends State<BookNowButton> {
           height: widget.screenHeight * 0.08,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.screenHeight * 0.04),
-            color: const Color.fromRGBO(125, 10, 10, 1),
+            color: const Color.fromRGBO(178, 56, 32, 1),
           ),
           child: Center(
             child: _isLoading

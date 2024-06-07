@@ -3,8 +3,10 @@ import 'package:buss_pass/Bus-Pass/home/widgets/ReceiptPaint.dart';
 
 class Receiptscreen extends StatefulWidget {
   final String? driverName;
+  final String? driverPhone;
   final String? price;
   final String? bookingTime;
+  final String? tripDate;
   final String? startingStop;
   final String? endingStop;
   final String? ticketId;
@@ -21,6 +23,8 @@ class Receiptscreen extends StatefulWidget {
     required this.ticketId,
     required this.tripId,
     required this.qrCodeImage,
+    this.tripDate,
+    this.driverPhone,
   }) : super(key: key);
 
   @override
@@ -94,7 +98,7 @@ class _ReceiptscreenState extends State<Receiptscreen> {
                             'Sanda Travels',
                             style: TextStyle(
                               fontSize: titleFontSize,
-                              color: const Color.fromRGBO(125, 10, 10, 1),
+                              color: const Color.fromRGBO(178, 56, 32, 1),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -105,22 +109,34 @@ class _ReceiptscreenState extends State<Receiptscreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                'Driver',
-                                style: TextStyle(
-                                  fontSize: fontSize,
-                                  color: Colors.grey,
-                                ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Driver',
+                                    style: TextStyle(
+                                      fontSize: fontSize,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  SizedBox(width: padding * 0.5),
+                                  Text(
+                                    widget.driverName!,
+                                    style: TextStyle(
+                                      fontSize: fontSize,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: padding * 0.5),
+                                ],
                               ),
-                              SizedBox(height: padding * 0.5),
                               Text(
-                                widget.driverName!,
+                                widget.driverPhone!,
                                 style: TextStyle(
                                   fontSize: fontSize,
                                   color: Colors.black,
-                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
@@ -154,14 +170,6 @@ class _ReceiptscreenState extends State<Receiptscreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'From',
-                            style: TextStyle(
-                              fontSize: fontSize,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          SizedBox(height: padding * 0.5),
-                          Text(
                             widget.startingStop!,
                             style: TextStyle(
                               fontSize: fontSize,
@@ -169,20 +177,9 @@ class _ReceiptscreenState extends State<Receiptscreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ],
-                      ),
-                      SizedBox(height: padding),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'To',
-                            style: TextStyle(
-                              fontSize: fontSize,
-                              color: Colors.grey,
-                            ),
+                          SizedBox(
+                            height: padding * 0.5,
                           ),
-                          SizedBox(height: padding * 0.5),
                           Text(
                             widget.endingStop!,
                             style: TextStyle(
@@ -198,15 +195,37 @@ class _ReceiptscreenState extends State<Receiptscreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Date',
+                            'Booking Date',
                             style: TextStyle(
                               fontSize: fontSize,
                               color: Colors.grey,
                             ),
                           ),
-                          SizedBox(width: screenWidth * 0.05),
+                          Spacer(),
                           Text(
                             widget.bookingTime!,
+                            style: TextStyle(
+                              fontSize: fontSize,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: padding),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Trip Date',
+                            style: TextStyle(
+                              fontSize: fontSize,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            widget.tripDate!,
                             style: TextStyle(
                               fontSize: fontSize,
                               color: Colors.black,

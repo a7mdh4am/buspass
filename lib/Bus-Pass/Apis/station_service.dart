@@ -15,6 +15,7 @@ class StationService {
         TripBody trip = TripBody(
           name: station['name'],
           id: station['id'].toString(),
+          location: station['location'],
         );
         trips.add(trip);
       }

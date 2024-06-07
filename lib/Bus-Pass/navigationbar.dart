@@ -13,8 +13,26 @@ class ButtonNavigationBar extends StatefulWidget {
 
 class _ButtonNavigationBarState extends State<ButtonNavigationBar> {
   int _currentIndex = 0;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
 
   void _onPressed(int index) {
+    setState(() {
+      _currentIndex = index;
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  void _onPageChanged(int index) {
     setState(() {
       _currentIndex = index;
     });
@@ -26,8 +44,9 @@ class _ButtonNavigationBarState extends State<ButtonNavigationBar> {
     return Scaffold(
       body: Stack(
         children: [
-          IndexedStack(
-            index: _currentIndex,
+          PageView(
+            controller: _pageController,
+            onPageChanged: _onPageChanged,
             children: const [
               HomeScreen(),
               LocationScreen(),

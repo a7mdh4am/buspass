@@ -1,4 +1,5 @@
 import 'package:buss_pass/Bus-Pass/auth/login_screen.dart';
+import 'package:buss_pass/Bus-Pass/driver/EditDriverProfileScreen.dart';
 import 'package:buss_pass/Bus-Pass/home/widgets/help.dart';
 import 'package:buss_pass/Bus-Pass/home/widgets/privacy.dart';
 import 'package:buss_pass/Bus-Pass/model/driver_model.dart';
@@ -72,12 +73,12 @@ class DriverProfileScreen extends StatelessWidget {
               icon: Icons.person,
               label: "Edit Profile",
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const EditDriverProfileScreen(),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EditDriverProfileScreen(),
+                  ),
+                );
               },
             ),
             const SizedBox(height: 10),
