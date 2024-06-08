@@ -56,7 +56,7 @@ class HelpPage extends StatelessWidget {
                 Icon(Icons.email, size: 25),
                 SizedBox(width: 10),
                 Text(
-                  'Email: b.pass@gmail.com',
+                  'Email: bpass1539@gmail.com',
                   style: TextStyle(fontSize: 18),
                 ),
               ],
@@ -67,7 +67,7 @@ class HelpPage extends StatelessWidget {
                 Icon(Icons.phone, size: 25),
                 SizedBox(width: 10),
                 Text(
-                  'Phone: +20 109 876 5432',
+                  'Phone: +20 122 273 3443',
                   style: TextStyle(fontSize: 18),
                 ),
               ],

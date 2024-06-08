@@ -12,6 +12,7 @@ class _AttendancePageState extends State<AttendancePage> {
   final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? _qrViewController;
   String _qrCodeData = '';
+  bool _isProcessing = false;
 
   @override
   void dispose() {
@@ -20,27 +21,40 @@ class _AttendancePageState extends State<AttendancePage> {
   }
 
   Future<void> _applyAttendance(String qrCodeData) async {
-    var data = qrCodeData.split('_');
-    var passengerId = int.parse(data[0].split(':')[1]);
-    var tripId = int.parse(data[1].split(':')[1]);
+    setState(() {
+      _isProcessing = true;
+    });
+    try {
+      var data = qrCodeData.split('_');
+      var passengerId = int.parse(data[0].split(':')[1]);
+      var tripId = int.parse(data[1].split(':')[1]);
 
-    var apiUrl = 'http://busspass.somee.com/api/Attendance/apply-attendance';
-    var response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'passengerId': passengerId, 'tripId': tripId}),
-    );
+      var apiUrl = 'http://busspass.somee.com/api/Attendance/apply-attendance';
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'passengerId': passengerId, 'tripId': tripId}),
+      );
 
-    if (response.statusCode == 200) {
-      // Passenger has reserved this trip
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Passenger Attended!')),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to apply attendance')),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Passenger Attended!')),
+        SnackBar(content: Text('Error: $e')),
       );
-      Navigator.pop(context);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to apply attendance')),
-      );
+    } finally {
+      setState(() {
+        _isProcessing = false;
+      });
+      _qrViewController?.resumeCamera();
     }
   }
 
@@ -58,15 +72,21 @@ class _AttendancePageState extends State<AttendancePage> {
                   _qrViewController = controller;
                 });
                 controller.scannedDataStream.listen((scanData) {
-                  setState(() {
-                    _qrCodeData = scanData.code!;
-                  });
-                  _applyAttendance(_qrCodeData);
+                  if (!_isProcessing) {
+                    setState(() {
+                      _qrCodeData = scanData.code!;
+                    });
+                    _qrViewController?.pauseCamera();
+                    _applyAttendance(_qrCodeData);
+                  }
                 });
               },
             ),
           ),
-          Text('Scanned QR Code Data: $_qrCodeData'),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Scanned QR Code Data: $_qrCodeData'),
+          ),
         ],
       ),
     );

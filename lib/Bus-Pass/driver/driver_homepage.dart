@@ -132,7 +132,7 @@ class _DriverScreenState extends State<DriverScreen> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: screenHeight * 0.1),
+                      padding: EdgeInsets.only(bottom: screenHeight * 0.63),
                       decoration: const BoxDecoration(
                         color: Color.fromRGBO(241, 241, 241, 1),
                         borderRadius: BorderRadius.only(
@@ -140,160 +140,198 @@ class _DriverScreenState extends State<DriverScreen> {
                           topLeft: Radius.circular(50),
                         ),
                       ),
-                      child: ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: tripProvider.trips.length,
-                        itemBuilder: (ctx, index) {
-                          final trip = tripProvider.trips[index];
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: screenHeight * 0.025,
-                              horizontal: screenWidth * 0.05,
-                            ),
-                            child: GestureDetector(
-                              onTap: () async {
-                                bool shouldRefresh = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        TripDetailsScreen(trip: trip),
-                                  ),
-                                );
-                                if (shouldRefresh == true) {
-                                  setState(() {
-                                    _tripsFuture = _fetchTrips();
-                                  });
-                                }
-                              },
-                              child: CustomPaint(
-                                painter: TicketPainter(),
-                                child: Container(
-                                  margin: EdgeInsets.all(screenWidth * 0.02),
-                                  padding: EdgeInsets.all(screenWidth * 0.003),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                                height: screenHeight * 0.01),
-                                            Text(
-                                              'From',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: screenWidth * 0.04,
-                                              ),
-                                            ),
-                                            Text(
-                                              trip.fromStationName!,
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: screenWidth * 0.04,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                                height: screenHeight * 0.01),
-                                            Text(
-                                              'To',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: screenWidth * 0.04,
-                                              ),
-                                            ),
-                                            Text(
-                                              trip.toStationName.toString(),
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: screenWidth * 0.04,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                                height: screenHeight * 0.01),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'Available Seats ',
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize:
-                                                        screenWidth * 0.04,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  trip.availableSeats
-                                                      .toString(),
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize:
-                                                        screenWidth * 0.04,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                                height: screenHeight * 0.01),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'Starts AT ',
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize:
-                                                        screenWidth * 0.04,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  Date().formatDate(trip
-                                                      .departureTime
-                                                      .toString()),
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize:
-                                                        screenWidth * 0.04,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(width: screenWidth * 0.1),
-                                      Column(
-                                        children: [
-                                          SizedBox(height: screenHeight * 0.04),
-                                          const Text('TicketID'),
-                                          Text(
-                                            trip.id.toString(),
-                                            style: TextStyle(
-                                              fontSize: screenWidth * 0.12,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        width: screenWidth * 0.06,
-                                      )
-                                    ],
+                      child: tripProvider.trips.isEmpty
+                          ? Center(
+                              child: SizedBox(
+                                child: const Text(
+                                  'No trips available',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
                                   ),
                                 ),
                               ),
+                            )
+                          : ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: tripProvider.trips.length,
+                              itemBuilder: (ctx, index) {
+                                final trip = tripProvider.trips[index];
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: screenHeight * 0.025,
+                                    horizontal: screenWidth * 0.05,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      bool shouldRefresh = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TripDetailsScreen(trip: trip),
+                                        ),
+                                      );
+                                      if (shouldRefresh == true) {
+                                        setState(() {
+                                          _tripsFuture = _fetchTrips();
+                                        });
+                                      }
+                                    },
+                                    child: CustomPaint(
+                                      painter: TicketPainter(),
+                                      child: Container(
+                                        margin:
+                                            EdgeInsets.all(screenWidth * 0.02),
+                                        padding:
+                                            EdgeInsets.all(screenWidth * 0.003),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                      height:
+                                                          screenHeight * 0.01),
+                                                  Text(
+                                                    'From',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize:
+                                                          screenWidth * 0.04,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    trip.fromStationName!,
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize:
+                                                          screenWidth * 0.04,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          screenHeight * 0.01),
+                                                  Text(
+                                                    'To',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize:
+                                                          screenWidth * 0.04,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    trip.toStationName
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize:
+                                                          screenWidth * 0.04,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          screenHeight * 0.01),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        'Available Seats ',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize:
+                                                              screenWidth *
+                                                                  0.04,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        trip.availableSeats
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize:
+                                                              screenWidth *
+                                                                  0.04,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          screenHeight * 0.01),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        'Starts AT ',
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize:
+                                                              screenWidth *
+                                                                  0.04,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        Date().formatDate(trip
+                                                            .departureTime
+                                                            .toString()),
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize:
+                                                              screenWidth *
+                                                                  0.04,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(width: screenWidth * 0.1),
+                                            Column(
+                                              children: [
+                                                SizedBox(
+                                                    height:
+                                                        screenHeight * 0.04),
+                                                const Text('TicketID'),
+                                                Text(
+                                                  trip.id.toString(),
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        screenWidth * 0.12,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              width: screenWidth * 0.06,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ),
                   ],
                 ),

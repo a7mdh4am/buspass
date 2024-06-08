@@ -1,3 +1,4 @@
+import 'package:buss_pass/Bus-Pass/profile/widgets/dateForrmat.dart';
 import 'package:flutter/material.dart';
 import 'package:buss_pass/Bus-Pass/home/widgets/UpperReceiptPaint.dart';
 import 'package:buss_pass/Bus-Pass/home/widgets/trip_details_body.dart';
@@ -129,7 +130,7 @@ class _ComfirmationTripScreenState extends State<ComfirmationTripScreen> {
                                 ),
                                 SizedBox(height: screenHeight * 0.01),
                                 Text(
-                                  widget.tripDetailsBodies.price.toString(),
+                                  '${widget.tripDetailsBodies.price.toString()} £E',
                                   style: TextStyle(
                                     fontSize: fontSize,
                                     color: Colors.black,
@@ -143,46 +144,30 @@ class _ComfirmationTripScreenState extends State<ComfirmationTripScreen> {
                       ],
                     ),
                     SizedBox(height: screenHeight * 0.03),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'From',
-                          style: TextStyle(
-                            fontSize: fontSize,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.01),
-                        Text(
-                          widget.tripDetailsBodies.fromStationName!,
-                          style: TextStyle(
-                            fontSize: fontSize,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.03),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'To',
-                          style: TextStyle(
-                            fontSize: fontSize,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.01),
-                        Text(
-                          widget.tripDetailsBodies.toStationName!,
-                          style: TextStyle(
-                            fontSize: fontSize,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              widget.tripDetailsBodies.fromStationName!,
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Icon(Icons.arrow_downward_outlined),
+                            Text(
+                              widget.tripDetailsBodies.toStationName!,
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -199,7 +184,7 @@ class _ComfirmationTripScreenState extends State<ComfirmationTripScreen> {
                         ),
                         SizedBox(width: screenWidth * 0.05),
                         Text(
-                          widget.tripDetailsBodies.date!,
+                          Date().formatDate(widget.tripDetailsBodies.date!),
                           style: TextStyle(
                             fontSize: fontSize,
                             color: Colors.black,

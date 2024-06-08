@@ -33,7 +33,7 @@ class TripDetailsBody extends StatelessWidget {
     return TripDetailsBody(
       key: UniqueKey(),
       driverName: json['driverName'] as String?,
-      driverPhone: json['driverPhone'] as String ?? '',
+      driverPhone: json['driverPhone'] as String?,
       date: json['departureTime'] as String?,
       toStationName: json['toStationName'] as String?,
       fromStationName: json['fromStationName'] as String?,

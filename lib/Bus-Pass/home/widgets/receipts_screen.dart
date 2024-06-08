@@ -27,39 +27,67 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
       future: ReceiptService.getReceiptsByPassengerId(widget.passengerId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
+          // Loading state
           return Scaffold(
-            backgroundColor: Color.fromRGBO(241, 241, 241, 1),
             appBar: AppBar(
-              title: const Text(
+              title: Text(
                 "Receipts",
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Color.fromRGBO(39, 66, 129, 1),
-                ),
+                    color: const Color.fromRGBO(39, 66, 129, 1),
+                    fontWeight: FontWeight.bold),
               ),
               backgroundColor: Color.fromRGBO(241, 241, 241, 1),
             ),
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Container(
+                color: Color.fromRGBO(241, 241, 241, 1),
+                child: Center(
+                    child: CircularProgressIndicator(
+                  color: const Color.fromRGBO(39, 66, 129, 1),
+                ))),
           );
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (snapshot.hasData) {
-          final List<Map<String, dynamic>> tickets = snapshot.data ?? [];
+          // Error state
+          String errorMessage = 'No Receipts Available!';
+          if (snapshot.error.runtimeType == NoSuchMethodError) {
+            errorMessage = 'Receipts empty';
+          }
           return Scaffold(
             appBar: AppBar(
-              title: const Text(
+              title: Text(
                 "Receipts",
                 style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Color.fromRGBO(39, 66, 129, 1),
+                    color: const Color.fromRGBO(39, 66, 129, 1),
+                    fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: Color.fromRGBO(241, 241, 241, 1),
+            ),
+            body: Container(
+              color: Color.fromRGBO(241, 241, 241, 1),
+              child: Center(
+                child: Text(
+                  errorMessage,
+                  style: TextStyle(color: Colors.black87),
                 ),
+              ),
+            ),
+          );
+        } else if (snapshot.hasData) {
+          // Data available state
+          final List<Map<String, dynamic>> tickets = snapshot.data ?? [];
+          if (tickets.isEmpty) {
+            return Center(child: Text('No receipts available'));
+          }
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                "Receipts",
+                style: TextStyle(
+                    color: const Color.fromRGBO(39, 66, 129, 1),
+                    fontWeight: FontWeight.bold),
               ),
               backgroundColor: Color.fromRGBO(241, 241, 241, 1),
             ),
             body: ListView.builder(
-              reverse: true,
               itemCount: tickets.length,
               itemBuilder: (context, index) {
                 final ticket = tickets[index];
@@ -80,7 +108,19 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
             ),
           );
         } else {
-          return const Center(child: Text('No data available'));
+          // Empty state
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                "Receipts",
+                style: TextStyle(
+                    color: const Color.fromRGBO(39, 66, 129, 1),
+                    fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: Color.fromRGBO(241, 241, 241, 1),
+            ),
+            body: Center(child: Text('No data available')),
+          );
         }
       },
     );
@@ -198,6 +238,8 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
                   onPressed: canCancel
                       ? () async {
                           await cancelTrip(int.parse(ticketId));
+                          print(now);
+                          print(TripDateTime);
                           // Show a dialog or snackbar with the message
                           showDialog(
                             context: context,
