@@ -238,6 +238,8 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
                   onPressed: canCancel
                       ? () async {
                           await cancelTrip(int.parse(ticketId));
+                          print(now);
+                          print(TripDateTime);
                           // Show a dialog or snackbar with the message
                           showDialog(
                             context: context,

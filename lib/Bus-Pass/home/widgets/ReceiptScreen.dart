@@ -110,7 +110,7 @@ class _ReceiptscreenState extends State<Receiptscreen> {
                         children: [
                           Column(
                             children: [
-                              Row(
+                              Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
@@ -141,7 +141,7 @@ class _ReceiptscreenState extends State<Receiptscreen> {
                               ),
                             ],
                           ),
-                          SizedBox(width: screenWidth * 0.15),
+                          SizedBox(width: screenWidth * 0.11),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -166,27 +166,30 @@ class _ReceiptscreenState extends State<Receiptscreen> {
                         ],
                       ),
                       SizedBox(height: padding),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            widget.startingStop!,
-                            style: TextStyle(
-                              fontSize: fontSize,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            height: padding * 0.5,
-                          ),
-                          Text(
-                            widget.endingStop!,
-                            style: TextStyle(
-                              fontSize: fontSize,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                widget.startingStop!,
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Icon(Icons.arrow_downward_outlined),
+                              Text(
+                                widget.endingStop!,
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
