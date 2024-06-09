@@ -5,11 +5,16 @@ import 'package:provider/provider.dart';
 import 'package:buss_pass/Bus-Pass/providers/driver_provider.dart';
 import 'package:buss_pass/Bus-Pass/providers/trip_provider.dart';
 import 'package:buss_pass/Bus-Pass/providers/user_provider.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase and FCM
+  // Initialize Firebase
+  await Firebase.initializeApp();
+
+  // Initialize Firebase Notifications
   await FirebaseNotification().initialize();
 
   runApp(
@@ -30,6 +35,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      useInheritedMediaQuery: true,
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
     );
